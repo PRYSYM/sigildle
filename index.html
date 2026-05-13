@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Sigildle — daily sigil puzzle</title>
+    <meta name="description" content="Forge today's sigil in six tries. A daily symbol puzzle." />
+    <meta name="theme-color" content="#0e0e12" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%230e0e12'/><circle cx='50' cy='50' r='26' fill='none' stroke='%238b5cf6' stroke-width='10'/><circle cx='50' cy='50' r='7' fill='%238b5cf6'/></svg>"
+    />
+  </head>
+  <body>
+    <header>
+      <button id="help-btn" class="icon-btn" aria-label="How to play" title="How to play">?</button>
+      <h1>SIGILDLE</h1>
+      <div class="header-right">
+        <button id="mute-btn" class="icon-btn" aria-label="Mute sound" title="Sound">🔊</button>
+        <button id="stats-btn" class="icon-btn" aria-label="Statistics" title="Statistics">▤</button>
+      </div>
+    </header>
+
+    <main id="app"></main>
+
+    <footer>
+      <a href="https://github.com/PRYSYM/sigildle">source</a> ·
+      a <a href="https://github.com/PRYSYM">PRYSYM</a> toy ·
+      inspired by <a href="https://github.com/PRYSYM/open-identity-symbols">open-identity-symbols</a>
+    </footer>
+
+    <dialog id="help">
+      <h2>How to play</h2>
+      <p>Forge today's <strong>sigil</strong> — a sequence of four symbols — in six tries.</p>
+      <p>Tap a slot in the working row, then pick a symbol. Hit <strong>Forge</strong> to submit. After each guess the slots are colored:</p>
+      <ul class="legend">
+        <li><span class="swatch correct"></span> right symbol, right slot</li>
+        <li><span class="swatch present"></span> right symbol, wrong slot</li>
+        <li><span class="swatch absent"></span> not in today's sigil</li>
+      </ul>
+      <p>A new sigil appears every day. Switch tabs for <strong>Practice</strong> (endless rounds that grow) or <strong>Zen</strong> (free-compose a sigil and share it as a link or image).</p>
+      <p>Keyboard: <kbd>1</kbd>–<kbd>8</kbd> place a symbol · <kbd>←</kbd>/<kbd>→</kbd> move · <kbd>⌫</kbd> remove the last symbol · <kbd>↵</kbd> forge. Mute with the 🔊 button.</p>
+      <form method="dialog"><button class="btn primary">Got it</button></form>
+    </dialog>
+
+    <dialog id="stats">
+      <h2>Statistics</h2>
+      <div id="stats-body"></div>
+      <form method="dialog"><button class="btn">Close</button></form>
+    </dialog>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

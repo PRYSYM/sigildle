@@ -1,0 +1,18 @@
+{
+  "name": "sigildle",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Forge today's sigil in six tries — a daily symbol puzzle. Part of PRYSYM.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "vite": "^5.2.0",
+    "vitest": "^1.6.0"
+  }
+}
