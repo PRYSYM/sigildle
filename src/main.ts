@@ -1,9 +1,10 @@
 import './styles.css';
+import QRCode from 'qrcode';
 import { Engine } from './game/engine';
 import { PRIMITIVES } from './game/primitives';
 import { Zen } from './game/zen';
 import { loadPracticeBest, savePracticeBest } from './state/storage';
-import { shareText } from './ui/share';
+import { puzzleNumber, shareText } from './ui/share';
 import { downloadPng, downloadSvg } from './ui/export';
 import { initSound, isSoundOn, sfx, toggleSound } from './ui/sound';
 import {
@@ -55,12 +56,8 @@ function render(): void {
 
   if (screen === 'zen') {
     app.innerHTML = bar + zenHtml(zen, selectedSlot);
-    syncHash();
     stopCountdown();
-    return;
-  }
-
-  if (engine.status === 'playing') {
+  } else if (engine.status === 'playing') {
     if (engine.draft[selectedSlot] !== null && !engine.draftComplete) {
       selectedSlot = nextEmptySlot(selectedSlot);
     }
@@ -72,6 +69,8 @@ function render(): void {
     if (engine.mode === 'daily') startCountdown();
     else stopCountdown();
   }
+
+  syncHash();
 }
 
 function syncHash(): void {
@@ -402,6 +401,53 @@ muteBtn.addEventListener('click', () => {
 
 document.getElementById('help-btn')!.addEventListener('click', () => helpDialog.showModal());
 document.getElementById('stats-btn')!.addEventListener('click', openStats);
+
+const puzzleNoEl = document.getElementById('puzzle-no');
+if (puzzleNoEl) puzzleNoEl.textContent = String(puzzleNumber()).padStart(3, '0');
+
+// --- QR (play on mobile) ----------------------------------------------------
+const qrDialog = document.getElementById('qr') as HTMLDialogElement;
+const qrBtn = document.getElementById('qr-btn');
+const qrCanvas = document.getElementById('qr-canvas');
+const qrUrlEl = document.getElementById('qr-url');
+const qrCopyBtn = document.getElementById('qr-copy');
+let qrRendered = false;
+
+function gameUrl(): string {
+  // Always link to the canonical hosted URL so the QR works from localhost too.
+  // Falls back to current origin if the page isn't on the PRYSYM host.
+  const canonical = 'https://prysym.github.io/sigildle/';
+  if (/prysym\.github\.io/i.test(location.host)) return location.origin + location.pathname;
+  return canonical;
+}
+
+async function openQr(): Promise<void> {
+  if (!qrCanvas || !qrUrlEl) return;
+  if (!qrRendered) {
+    const url = gameUrl();
+    qrUrlEl.textContent = url;
+    const svg = await QRCode.toString(url, {
+      type: 'svg',
+      errorCorrectionLevel: 'M',
+      margin: 1,
+      color: { dark: '#0b0a08', light: '#ece5d2' },
+    });
+    qrCanvas.innerHTML = svg;
+    qrRendered = true;
+  }
+  sfx.ui();
+  qrDialog.showModal();
+}
+
+qrBtn?.addEventListener('click', openQr);
+qrCopyBtn?.addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(gameUrl());
+    toast('Link copied');
+  } catch {
+    window.prompt('Copy this link:', gameUrl());
+  }
+});
 
 // Open straight into a shared zen sigil if the URL carries one.
 if (/^#z=/.test(location.hash)) {
