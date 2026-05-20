@@ -65,14 +65,17 @@ export function boardHtml(engine: Engine, selectedSlot: number, revealRow: numbe
     rows.push(`<div class="row">${Array.from({ length: engine.slots }, () => cell(null)).join('')}</div>`);
   }
 
-  return `<div class="board">${rows.join('')}</div>`;
+  return `<div class="board">${rows.join('')}<span class="corner-bl"></span><span class="corner-br"></span></div>`;
 }
 
 export function previewHtml(engine: Engine): string {
-  return `<div class="preview">${layered(
-    engine.draft.filter((p): p is string => p !== null),
-    'big',
-  )}</div>`;
+  return `<div class="preview-wrap">
+    <span class="preview-label">compose</span>
+    <div class="preview">${layered(
+      engine.draft.filter((p): p is string => p !== null),
+      'big',
+    )}</div>
+  </div>`;
 }
 
 export function paletteHtml(): string {
@@ -87,8 +90,8 @@ export function paletteHtml(): string {
 export function actionsHtml(engine: Engine): string {
   const canForge = engine.status === 'playing' && engine.draftComplete;
   return `<div class="actions">
-    <button class="btn" data-act="backspace">⌫ Backspace</button>
-    <button class="btn primary" data-act="submit" ${canForge ? '' : 'disabled'}>Forge</button>
+    <button class="btn" data-act="backspace">⌫ Clear</button>
+    <button class="btn primary" data-act="submit" ${canForge ? '' : 'disabled'}>Forge ✦</button>
   </div>`;
 }
 
@@ -131,11 +134,12 @@ export function endHtml(engine: Engine): string {
   const trophy = won
     ? `<div class="trophy">
         ${layered(engine.target, 'trophy-glyph')}
-        <p class="trophy-line">Sigildle #${puzzleNumber()} · ${engine.tries}/${engine.maxAttempts}${
-          engine.solveMs > 0 ? ` · ⏱${fmtDuration(engine.solveMs)}` : ''
+        <p class="end-sub">sigil forged</p>
+        <p class="trophy-line"><strong>№ ${puzzleNumber()}</strong> · ${engine.tries}/${engine.maxAttempts}${
+          engine.solveMs > 0 ? ` · ⏱ ${fmtDuration(engine.solveMs)}` : ''
         }</p>
       </div>`
-    : `<p class="end-msg">Out of tries.</p><p class="end-sub">Today's sigil</p>${answerHtml(engine)}`;
+    : `<p class="end-msg">Out of tries.</p><p class="end-sub">today's sigil</p>${answerHtml(engine)}`;
 
   return `<div class="end">
     ${trophy}
